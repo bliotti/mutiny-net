@@ -59,45 +59,45 @@ services:
       - "9735:9735"
       - "10009:10009"
       - "8081:8081"
-  rgs_server:
-    container_name: "rgs-server"
-    restart: always
-    stop_grace_period: 1m
-    build:
-      context: ./rapid-gossip-sync-server
-      dockerfile: ./docker/Dockerfile.rgs
-    volumes:
-      - ~/volumes/rgs:/usr/src/app:cached
-    links:
-      - postgres
-      - bitcoind
-    depends_on:
-      - postgres
-    environment:
-      RAPID_GOSSIP_SYNC_SERVER_DB_HOST: postgres
-      RAPID_GOSSIP_SYNC_SERVER_DB_USER: lightning-rgs
-      RAPID_GOSSIP_SYNC_SERVER_DB_PASSWORD: docker
-      RAPID_GOSSIP_SYNC_SERVER_DB_NAME: ln_graph_sync
-      RAPID_GOSSIP_SYNC_SERVER_NETWORK: signet
-      BITCOIN_REST_DOMAIN: bitcoind
-      BITCOIN_REST_PORT: 38332
-      LN_PEERS: 02465ed5be53d04fde66c9418ff14a5f2267723810176c9212b722e542dc1afb1b@lnd:9735 # lnd's node id
-    entrypoint: [ "rapid-gossip-sync-server" ]
+        #rgs_server:
+        #  container_name: "rgs-server"
+        #  restart: always
+        #  stop_grace_period: 1m
+        #  build:
+        #    context: ./rapid-gossip-sync-server
+        #    dockerfile: ./docker/Dockerfile.rgs
+        #  volumes:
+        #    - ~/volumes/rgs:/usr/src/app:cached
+        #  links:
+        #    - postgres
+        #    - bitcoind
+        #  depends_on:
+        #    - postgres
+        #  environment:
+        #    RAPID_GOSSIP_SYNC_SERVER_DB_HOST: postgres
+        #    RAPID_GOSSIP_SYNC_SERVER_DB_USER: lightning-rgs
+        #    RAPID_GOSSIP_SYNC_SERVER_DB_PASSWORD: docker
+        #    RAPID_GOSSIP_SYNC_SERVER_DB_NAME: ln_graph_sync
+        #    RAPID_GOSSIP_SYNC_SERVER_NETWORK: signet
+        #    BITCOIN_REST_DOMAIN: bitcoind
+        #    BITCOIN_REST_PORT: 38332
+        #    LN_PEERS: 02465ed5be53d04fde66c9418ff14a5f2267723810176c9212b722e542dc1afb1b@lnd:9735 # lnd's node id
+        #  entrypoint: [ "rapid-gossip-sync-server" ]
 
-  postgres:
-    container_name: "postgres"
-    image: 'postgres:12-alpine'
-    restart: always
-    stop_grace_period: 1m
-    user: "0:1000"
-    ports:
-      - "5432:5432"
-    volumes:
-      - ~/volumes/postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: lightning-rgs
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: ln_graph_sync
+        #  postgres:
+        #    container_name: "postgres"
+        #    image: 'postgres:12-alpine'
+        #    restart: always
+        #    stop_grace_period: 1m
+        #    user: "0:1000"
+        #    ports:
+        #      - "5432:5432"
+        #    volumes:
+        #      - ~/volumes/postgres:/var/lib/postgresql/data
+        #    environment:
+        #      POSTGRES_USER: lightning-rgs
+        #      POSTGRES_PASSWORD: docker
+        #      POSTGRES_DB: ln_graph_sync
   electrs:
     container_name: "electrs"
     build:
@@ -112,46 +112,46 @@ services:
     ports:
       - "3003:3003"
       - "50001:50001"
-  faucet:
-    container_name: "faucet"
-    build:
-      context: ./mutinynet-faucet
-      args:
-        VITE_HOST: "bitcoind"
-        VITE_PORT: "38332"
-        VITE_USER: "bitcoin"
-        VITE_PASS: $RPCPASSWORD
-        VITE_NETWORK: "regtest" # wrong intentionally because of bug in a library
-        VITE_LND_GRPC: "lnd:10009"
-        VITE_TLS_CERT: $LND_TLS_CERT
-        VITE_ADMIN_MACAROON: $LND_ADMIN_MACAROON
-    user: "0:1000"
-    restart: always
-    stop_grace_period: 1m
-    volumes:
-      - ~/volumes/faucet:/root/.faucet
-    ports:
-      - "3000:3000"
-  faucet_backend:
-    container_name: "faucet_backend"
-    build:
-      context: ./mutinynet-faucet-rs
-    environment:
-      BITCOIN_RPC_HOST_AND_PORT: "bitcoind:38332"
-      BITCOIN_RPC_USER: "bitcoin"
-      BITCOIN_RPC_PASSWORD: $RPCPASSWORD
-      NETWORK: "signet"
-      GRPC_PORT: "10009"
-      GRPC_HOST: "lnd"
-      TLS_CERT_PATH: "/root/.lnd/tls.cert"
-      ADMIN_MACAROON_PATH: "/root/.lnd/data/chain/bitcoin/signet/admin.macaroon"
-    user: "0:1000"
-    restart: always
-    stop_grace_period: 1m
-    volumes:
-      - ~/volumes/.lnd:/root/.lnd:ro
-    ports:
-      - "3001:3001"
+        #faucet:
+        #  container_name: "faucet"
+        #  build:
+        #    context: ./mutinynet-faucet
+        #    args:
+        #      VITE_HOST: "bitcoind"
+        #      VITE_PORT: "38332"
+        #      VITE_USER: "bitcoin"
+        #      VITE_PASS: $RPCPASSWORD
+        #      VITE_NETWORK: "regtest" # wrong intentionally because of bug in a library
+        #      VITE_LND_GRPC: "lnd:10009"
+        #      VITE_TLS_CERT: $LND_TLS_CERT
+        #      VITE_ADMIN_MACAROON: $LND_ADMIN_MACAROON
+        #  user: "0:1000"
+        #  restart: always
+        #  stop_grace_period: 1m
+        #  volumes:
+        #    - ~/volumes/faucet:/root/.faucet
+        #  ports:
+        #    - "3000:3000"
+        #faucet_backend:
+        #  container_name: "faucet_backend"
+        #  build:
+        #    context: ./mutinynet-faucet-rs
+        #  environment:
+        #    BITCOIN_RPC_HOST_AND_PORT: "bitcoind:38332"
+        #    BITCOIN_RPC_USER: "bitcoin"
+        #    BITCOIN_RPC_PASSWORD: $RPCPASSWORD
+        #    NETWORK: "signet"
+        #    GRPC_PORT: "10009"
+        #    GRPC_HOST: "lnd"
+        #    TLS_CERT_PATH: "/root/.lnd/tls.cert"
+        #    ADMIN_MACAROON_PATH: "/root/.lnd/data/chain/bitcoin/signet/admin.macaroon"
+        #  user: "0:1000"
+        #  restart: always
+        #  stop_grace_period: 1m
+        #  volumes:
+        #    - ~/volumes/.lnd:/root/.lnd:ro
+        #  ports:
+        #    - "3001:3001"
   web:
     container_name: "mempool_frontend"
     environment:
@@ -163,7 +163,7 @@ services:
     stop_grace_period: 1m
     command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
     ports:
-      - "8080:8080"
+      - "80:8080"
   api:
     container_name: "mempool_backend"
     environment:
